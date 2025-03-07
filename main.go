@@ -24,11 +24,21 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("The application is healthy!"))
 }
 
+func snippetView(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Display a specific snippet..."))
+}
+
+func snippetCreate(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Display a form for creating a new snippet..."))
+}
+
 func main() {
 	loadEnv()
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/healthz", healthCheck)
+
+	http.HandleFunc("/", home)
+	http.HandleFunc("/healthz", healthCheck)
+	http.HandleFunc("/snippet/view", snippetView)
+	http.HandleFunc("/snippet/create", snippetCreate)
 
 	serverPort := os.Getenv("SERVER_PORT")
 	if serverPort == "" {
@@ -36,6 +46,6 @@ func main() {
 	}
 
 	log.Println("The application is starting on port", serverPort)
-	err := http.ListenAndServe(fmt.Sprintf(":%s", serverPort), mux)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", serverPort), nil)
 	log.Fatal(err)
 }
