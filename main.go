@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -25,7 +26,14 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func snippetView(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Display a specific snippet..."))
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || id < 1 {
+		http.NotFound(w, r)
+		return
+	}
+
+	msg := fmt.Sprintf("Display the snippet with ID %d...", id)
+	w.Write([]byte(msg))
 }
 
 func snippetCreate(w http.ResponseWriter, r *http.Request) {
@@ -35,9 +43,9 @@ func snippetCreate(w http.ResponseWriter, r *http.Request) {
 func main() {
 	loadEnv()
 
-	http.HandleFunc("/", home)
+	http.HandleFunc("/{$}", home)
 	http.HandleFunc("/healthz", healthCheck)
-	http.HandleFunc("/snippet/view", snippetView)
+	http.HandleFunc("/snippet/view/{id}", snippetView)
 	http.HandleFunc("/snippet/create", snippetCreate)
 
 	serverPort := os.Getenv("SERVER_PORT")
