@@ -2,31 +2,44 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 )
 
+type application struct {
+	logger *slog.Logger
+}
+
 func main() {
 	// Load the environment variables
 	loadEnv()
+
+	// Create a new logger
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+	// Create a new application instance
+	app := &application{
+		logger: logger,
+	}
 
 	// Serve static files
 	fileServer := http.FileServer(http.Dir("ui/static/"))
 	http.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
 	// Register the route handlers
-	http.HandleFunc("GET /{$}", home)
-	http.HandleFunc("GET /healthz", healthCheck)
-	http.HandleFunc("GET /snippet/view/{id}", snippetView)
-	http.HandleFunc("POST /snippet/create", snippetCreate)
+	http.HandleFunc("GET /{$}", app.home)
+	http.HandleFunc("GET /healthz", app.healthCheck)
+	http.HandleFunc("GET /snippet/view/{id}", app.snippetView)
+	http.HandleFunc("POST /snippet/create", app.snippetCreate)
 
 	// Start the server
 	serverPort := os.Getenv("SERVER_PORT")
 	if serverPort == "" {
 		serverPort = "8080"
 	}
-	log.Println("The application is starting on port", serverPort)
+	logger.Info("starting server", "addr", serverPort)
 	err := http.ListenAndServe(fmt.Sprintf(":%s", serverPort), nil)
-	log.Fatal(err)
+	logger.Error(err.Error())
+	os.Exit(1)
 }
