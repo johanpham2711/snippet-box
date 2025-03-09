@@ -20,7 +20,27 @@ go get
 
 ## Run
 
+1. Basic
+
 ```bash
-go run main.go
+
+$ go run main.go
+
+```
+
+2. Live reload
+
+```bash
+# Home
+$ go install github.com/air-verse/air@latest
+$ export PATH=$(go env GOPATH)/bin:$PATH
+$ source ~/.zshrc  # or source ~/.bash_profile
+
+$ cd <project_folder>
+$ export PATH="$HOME/go/bin:$PATH"
+$ source ~/.zshrc  # or source ~/.bash_profile
+
+$ air init (Optional)
+$ air
 ```
 
