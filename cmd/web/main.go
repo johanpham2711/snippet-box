@@ -27,19 +27,13 @@ func main() {
 	fileServer := http.FileServer(http.Dir("ui/static/"))
 	http.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
-	// Register the route handlers
-	http.HandleFunc("GET /{$}", app.home)
-	http.HandleFunc("GET /healthz", app.healthCheck)
-	http.HandleFunc("GET /snippet/view/{id}", app.snippetView)
-	http.HandleFunc("POST /snippet/create", app.snippetCreate)
-
 	// Start the server
 	serverPort := os.Getenv("SERVER_PORT")
 	if serverPort == "" {
 		serverPort = "8080"
 	}
 	logger.Info("starting server", "addr", serverPort)
-	err := http.ListenAndServe(fmt.Sprintf(":%s", serverPort), nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", serverPort), app.routes())
 	logger.Error(err.Error())
 	os.Exit(1)
 }

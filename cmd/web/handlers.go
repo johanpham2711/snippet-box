@@ -54,7 +54,7 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
 }
 
-func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
 
 	w.WriteHeader(http.StatusCreated)
