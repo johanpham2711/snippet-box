@@ -75,9 +75,15 @@ func main() {
 	if serverPort == "" {
 		serverPort = "8080"
 	}
-	logger.Info("starting server", "addr", serverPort)
-	serverErr := http.ListenAndServe(fmt.Sprintf(":%s", serverPort), app.routes())
-	logger.Error(serverErr.Error())
+
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%s", serverPort),
+		Handler: app.routes(),
+	}
+
+	logger.Info("starting server", "addr", srv.Addr)
+	err = srv.ListenAndServe()
+	logger.Error(err.Error())
 	os.Exit(1)
 }
 
