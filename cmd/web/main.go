@@ -1,14 +1,19 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/johanpham2711/snippet-box/internal/models"
 )
 
 type application struct {
-	logger *slog.Logger
+	logger   *slog.Logger
+	snippets *models.SnippetModel
 }
 
 func main() {
@@ -18,9 +23,19 @@ func main() {
 	// Create a new logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
+	// Connect to the database
+	dsn := os.Getenv("MYSQL_DSN")
+	db, err := openDB(dsn)
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+	defer db.Close()
+
 	// Create a new application instance
 	app := &application{
-		logger: logger,
+		logger:   logger,
+		snippets: &models.SnippetModel{DB: db},
 	}
 
 	// Serve static files
@@ -33,7 +48,22 @@ func main() {
 		serverPort = "8080"
 	}
 	logger.Info("starting server", "addr", serverPort)
-	err := http.ListenAndServe(fmt.Sprintf(":%s", serverPort), app.routes())
-	logger.Error(err.Error())
+	serverErr := http.ListenAndServe(fmt.Sprintf(":%s", serverPort), app.routes())
+	logger.Error(serverErr.Error())
 	os.Exit(1)
+}
+
+func openDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Ping()
+	if err != nil {
+		db.Close()
+		return nil, err
+	}
+
+	return db, nil
 }

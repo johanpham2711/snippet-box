@@ -1,0 +1,15 @@
+services:
+    snippet-box-db:
+        image: mysql:8.0.31
+        container_name: snippet-box-db
+        ports:
+            - "${MYSQL_PORT}:${MYSQL_PORT}"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        volumes:
+            - snippet_box_db_data:/var/lib/mysql
+volumes:
+    snippet_box_db_data:
