@@ -14,8 +14,6 @@ func (app *application) healthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Go")
-
 	snippets, err := app.snippets.Latest()
 	if err != nil {
 		app.serverError(w, r, err)
