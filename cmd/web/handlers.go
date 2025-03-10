@@ -22,42 +22,39 @@ func loadEnv() {
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Server", "Go")
 
+	snippets, err := app.snippets.Latest()
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
 	files := []string{
-		"ui/html/base.tmpl.html",
-		"ui/html/partials/nav.tmpl.html",
-		"ui/html/pages/home.tmpl.html",
+		"./ui/html/base.tmpl.html",
+		"./ui/html/partials/nav.tmpl.html",
+		"./ui/html/pages/home.tmpl.html",
 	}
 
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		app.serverError(w, r, err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
+	// Create an instance of a templateData struct holding the slice of
+	// snippets.
+	data := templateData{
+		Snippets: snippets,
+	}
+
+	// Pass in the templateData struct when executing the template.
+	err = ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		app.serverError(w, r, err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
 
 func (app *application) healthCheck(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("The application is healthy!"))
-}
-
-func (app *application) snippetList(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Go")
-
-	snippet, err := app.snippets.Latest()
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-
-	for _, s := range snippet {
-		fmt.Fprintf(w, "%v\n", s)
-	}
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
