@@ -8,10 +8,12 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/johanpham2711/snippet-box/internal/models"
 )
 
 type application struct {
-	logger *slog.Logger
+	logger   *slog.Logger
+	snippets *models.SnippetModel
 }
 
 func main() {
@@ -21,15 +23,6 @@ func main() {
 	// Create a new logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
-	// Create a new application instance
-	app := &application{
-		logger: logger,
-	}
-
-	// Serve static files
-	fileServer := http.FileServer(http.Dir("ui/static/"))
-	http.Handle("GET /static/", http.StripPrefix("/static", fileServer))
-
 	// Connect to the database
 	dsn := os.Getenv("MYSQL_DSN")
 	db, err := openDB(dsn)
@@ -38,6 +31,16 @@ func main() {
 		os.Exit(1)
 	}
 	defer db.Close()
+
+	// Create a new application instance
+	app := &application{
+		logger:   logger,
+		snippets: &models.SnippetModel{DB: db},
+	}
+
+	// Serve static files
+	fileServer := http.FileServer(http.Dir("ui/static/"))
+	http.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
 	// Start the server
 	serverPort := os.Getenv("SERVER_PORT")

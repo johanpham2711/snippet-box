@@ -15,6 +15,8 @@ by [Johan Pham](https://github.com/johanpham2711)
 ## Installation
 
 ```bash
+docker compose up -d
+
 go get
 ```
 
@@ -30,6 +32,8 @@ $ go run main.go
 
 2. Live reload
 
+Install [air](https://github.com/air-verse/air)
+
 ```bash
 # Home
 $ go install github.com/air-verse/air@latest
@@ -40,7 +44,10 @@ $ cd <project_folder>
 $ export PATH="$HOME/go/bin:$PATH"
 $ source ~/.zshrc  # or source ~/.bash_profile
 
-$ air init (Optional)
+# run when setup
+$ air init
+
+# run live reload
 $ air
 ```
 
