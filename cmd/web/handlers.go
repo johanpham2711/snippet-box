@@ -46,6 +46,20 @@ func (app *application) healthCheck(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("The application is healthy!"))
 }
 
+func (app *application) snippetList(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Server", "Go")
+
+	snippet, err := app.snippets.Latest()
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	for _, s := range snippet {
+		fmt.Fprintf(w, "%v\n", s)
+	}
+}
+
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
