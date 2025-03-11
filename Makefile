@@ -3,10 +3,6 @@ db-start:
 	docker compose up -d
 db-stop:
 	docker compose down
-run:
-	go run main.go
-run-dev:
-	air
 install-air:
 	go install github.com/cosmtrek/air@latest
 	export PATH=$(go env GOPATH)/bin:$PATH
@@ -18,3 +14,14 @@ get-assets:
 tls:
 	@mkdir -p tls
 	@cd tls && go run /usr/local/go/src/crypto/tls/generate_cert.go --rsa-bits=2048 --host=localhost
+run:
+	go run ./cmd/web
+run-dev:
+	air
+test:
+	go test -v ./...
+all: 
+	make db-start
+	make install-air
+	make tls
+	make run-dev
