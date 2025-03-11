@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/tls"
 	"database/sql"
+	"flag"
 	"fmt"
 	"html/template"
 	"log/slog"
@@ -18,6 +19,7 @@ import (
 )
 
 type application struct {
+	debug          bool
 	logger         *slog.Logger
 	snippets       models.SnippetModelInterface
 	users          models.UserModelInterface
@@ -29,6 +31,9 @@ type application struct {
 func main() {
 	// Load the environment variables
 	loadEnv()
+
+	// Create debug flag
+	debug := flag.Bool("debug", false, "Enable debug mode")
 
 	// Create a new logger
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
@@ -59,6 +64,7 @@ func main() {
 
 	// Create a new application instance
 	app := &application{
+		debug:          *debug,
 		logger:         logger,
 		snippets:       &models.SnippetModel{DB: db},
 		users:          &models.UserModel{DB: db},
