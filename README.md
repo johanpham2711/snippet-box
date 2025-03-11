@@ -14,10 +14,14 @@ by [Johan Pham](https://github.com/johanpham2711)
 
 ## Installation
 
-```bash
-docker compose up -d
+-   Install Make
 
-go get
+-   Start database
+
+```bash
+$ make db-start
+
+$ go get
 ```
 
 ## Run
@@ -35,19 +39,13 @@ $ go run main.go
 Install [air](https://github.com/air-verse/air)
 
 ```bash
-# Home
-$ go install github.com/air-verse/air@latest
-$ export PATH=$(go env GOPATH)/bin:$PATH
-$ source ~/.zshrc  # or source ~/.bash_profile
-
-$ cd <project_folder>
-$ export PATH="$HOME/go/bin:$PATH"
-$ source ~/.zshrc  # or source ~/.bash_profile
-
-# run when setup
-$ air init
+$ make install-air
 
 # run live reload
-$ air
+$ make run-dev
+
+# or
+
+$ make all
 ```
 

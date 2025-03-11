@@ -15,8 +15,13 @@ tls:
 	@mkdir -p tls
 	@cd tls && go run /usr/local/go/src/crypto/tls/generate_cert.go --rsa-bits=2048 --host=localhost
 run:
-	go run main.go
+	go run ./cmd/web
 run-dev:
 	air
 test:
 	go test -v ./...
+all: 
+	make db-start
+	make install-air
+	make tls
+	make run-dev
