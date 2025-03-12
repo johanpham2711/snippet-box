@@ -26,6 +26,7 @@ func (app *application) routes() http.Handler {
 	mux.Handle("POST /snippet/create", protected.ThenFunc(app.snippetCreatePost))
 	mux.Handle("GET /snippet/update/{id}", protected.ThenFunc(app.snippetUpdate))
 	mux.Handle("POST /snippet/update/{id}", protected.ThenFunc(app.snippetUpdatePost))
+	mux.Handle("GET /snippet/delete/{id}", protected.ThenFunc(app.snippetDelete))
 
 	// User routes
 	mux.Handle("GET /user/signup", dynamic.ThenFunc(app.userSignup))

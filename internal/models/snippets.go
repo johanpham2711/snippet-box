@@ -9,6 +9,7 @@ import (
 type SnippetModelInterface interface {
 	Insert(title string, content string, expires int) (int, error)
 	Update(id int, title string, content string, expires int) error
+	Delete(id int) error
 	Get(id int) (Snippet, error)
 	Latest() ([]Snippet, error)
 }
@@ -51,6 +52,13 @@ func (m *SnippetModel) Update(id int, title string, content string, expires int)
 	WHERE id = ?`
 
 	_, err := m.DB.Exec(stmt, title, content, expires, id)
+	return err
+}
+
+func (m *SnippetModel) Delete(id int) error {
+	stmt := `DELETE FROM snippets WHERE id = ?`
+
+	_, err := m.DB.Exec(stmt, id)
 	return err
 }
 
