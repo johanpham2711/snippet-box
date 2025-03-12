@@ -8,6 +8,7 @@ import (
 
 type SnippetModelInterface interface {
 	Insert(title string, content string, expires int) (int, error)
+	Update(id int, title string, content string, expires int) error
 	Get(id int) (Snippet, error)
 	Latest() ([]Snippet, error)
 }
@@ -43,6 +44,14 @@ func (m *SnippetModel) Insert(title string, content string, expires int) (int, e
 		return 0, err
 	}
 	return int(id), nil
+}
+
+func (m *SnippetModel) Update(id int, title string, content string, expires int) error {
+	stmt := `UPDATE snippets SET title = ?, content = ?, expires = DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY)
+	WHERE id = ?`
+
+	_, err := m.DB.Exec(stmt, title, content, expires, id)
+	return err
 }
 
 // This will return a specific snippet based on its id.
