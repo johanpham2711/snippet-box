@@ -24,6 +24,10 @@ func (m *SnippetModel) Update(id int, title string, content string, expires int)
 	return nil
 }
 
+func (m *SnippetModel) Delete(id int) error {
+	return nil
+}
+
 func (m *SnippetModel) Get(id int) (models.Snippet, error) {
 	switch id {
 	case 1:

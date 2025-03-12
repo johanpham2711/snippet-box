@@ -8,7 +8,8 @@
         <th>ID</th>
         <th>Title</th>
         <th>Created</th>
-        <th>Action</th>
+        <th>Update</th>
+        <th>Delete</th>
     </tr>
     {{range .Snippets}}
     <tr>
@@ -19,6 +20,11 @@
         <td>
             <button>
                 <a href='/snippet/update/{{.ID}}'>Update</a>
+            </button>
+        </td>
+        <td>
+            <button>
+                <a href='/snippet/delete/{{.ID}}'>Delete</a>
             </button>
         </td>
     </tr>
