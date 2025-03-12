@@ -20,6 +20,10 @@ func (m *SnippetModel) Insert(title string, content string, expires int) (int, e
 	return 2, nil
 }
 
+func (m *SnippetModel) Update(id int, title string, content string, expires int) error {
+	return nil
+}
+
 func (m *SnippetModel) Get(id int) (models.Snippet, error) {
 	switch id {
 	case 1:
