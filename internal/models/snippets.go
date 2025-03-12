@@ -11,7 +11,8 @@ type SnippetModelInterface interface {
 	Update(id int, userID int, title string, content string, expires int) error
 	Delete(id int, userID int) error
 	Get(id int) (Snippet, error)
-	Latest() ([]Snippet, error)
+	List() ([]Snippet, error)
+	ListByUserID(userID int) ([]Snippet, error)
 }
 
 // Define a Snippet type to hold the data for an individual snippet. Notice how
@@ -84,11 +85,42 @@ func (m *SnippetModel) Get(id int) (Snippet, error) {
 }
 
 // This will return the 10 most recently created snippets.
-func (m *SnippetModel) Latest() ([]Snippet, error) {
+func (m *SnippetModel) List() ([]Snippet, error) {
 	stmt := `SELECT id, title, content, created, expires FROM snippets
     WHERE expires > UTC_TIMESTAMP() ORDER BY id DESC LIMIT 10`
 
 	rows, err := m.DB.Query(stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var snippets []Snippet
+
+	for rows.Next() {
+		var s Snippet
+
+		if err := rows.Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires); err != nil {
+			return nil, err
+		}
+
+		snippets = append(snippets, s)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return snippets, nil
+}
+
+// This will return the 10 most recently created snippets.
+func (m *SnippetModel) ListByUserID(userID int) ([]Snippet, error) {
+	stmt := `SELECT id, title, content, created, expires FROM snippets
+    WHERE user_id = ? AND expires > UTC_TIMESTAMP() ORDER BY id DESC LIMIT 10`
+
+	rows, err := m.DB.Query(stmt, userID)
 	if err != nil {
 		return nil, err
 	}

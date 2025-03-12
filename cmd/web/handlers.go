@@ -15,7 +15,7 @@ func (app *application) healthCheck(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	snippets, err := app.snippets.Latest()
+	snippets, err := app.snippets.List()
 	if err != nil {
 		app.serverError(w, r, err)
 		return
@@ -26,6 +26,22 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	// Use the new render helper.
 	app.render(w, r, http.StatusOK, "home.tmpl.html", data)
+}
+
+func (app *application) mySnippets(w http.ResponseWriter, r *http.Request) {
+	userID := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
+
+	snippets, err := app.snippets.ListByUserID(userID)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	data := app.newTemplateData(r)
+	data.Snippets = snippets
+
+	// Use the new render helper.
+	app.render(w, r, http.StatusOK, "my-snippet.tmpl.html", data)
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
@@ -194,7 +210,7 @@ func (app *application) snippetDelete(w http.ResponseWriter, r *http.Request) {
 
 	app.sessionManager.Put(r.Context(), "flash", "Snippet successfully delete!")
 
-	snippets, err := app.snippets.Latest()
+	snippets, err := app.snippets.List()
 	if err != nil {
 		app.serverError(w, r, err)
 		return

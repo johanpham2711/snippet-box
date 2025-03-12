@@ -8,6 +8,8 @@
         <th>ID</th>
         <th>Title</th>
         <th>Created</th>
+        <th>Update</th>
+        <th>Delete</th>
     </tr>
     {{range .Snippets}}
     <tr>
@@ -15,6 +17,16 @@
         <td><a href='/snippet/view/{{.ID}}'>{{.Title}}</a></td>
         <!-- Use the new template function here -->
         <td>{{humanDate .Created}}</td>
+        <td>
+            <button>
+                <a href='/snippet/update/{{.ID}}'>Update</a>
+            </button>
+        </td>
+        <td>
+            <button>
+                <a href='/snippet/delete/{{.ID}}'>Delete</a>
+            </button>
+        </td>
     </tr>
     {{end}}
 </table>

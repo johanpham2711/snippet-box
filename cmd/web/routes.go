@@ -22,6 +22,7 @@ func (app *application) routes() http.Handler {
 	mux.Handle("GET /about", dynamic.ThenFunc(app.about))
 	mux.Handle("GET /healthz", dynamic.ThenFunc(app.healthCheck))
 	mux.Handle("GET /snippet/view/{id}", dynamic.ThenFunc(app.snippetView))
+	mux.Handle("GET /snippet/me", protected.ThenFunc(app.mySnippets))
 	mux.Handle("GET /snippet/create", protected.ThenFunc(app.snippetCreate))
 	mux.Handle("POST /snippet/create", protected.ThenFunc(app.snippetCreatePost))
 	mux.Handle("GET /snippet/update/{id}", protected.ThenFunc(app.snippetUpdate))

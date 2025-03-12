@@ -37,6 +37,10 @@ func (m *SnippetModel) Get(id int) (models.Snippet, error) {
 	}
 }
 
-func (m *SnippetModel) Latest() ([]models.Snippet, error) {
+func (m *SnippetModel) List() ([]models.Snippet, error) {
+	return []models.Snippet{mockSnippet}, nil
+}
+
+func (m *SnippetModel) ListByUserID(userID int) ([]models.Snippet, error) {
 	return []models.Snippet{mockSnippet}, nil
 }
