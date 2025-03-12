@@ -70,6 +70,7 @@ type snippetCreateForm struct {
 }
 
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
+	userID := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
 	var form snippetCreateForm
 
 	err := app.decodePostForm(r, &form)
@@ -90,7 +91,7 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	id, err := app.snippets.Insert(form.Title, form.Content, form.Expires)
+	id, err := app.snippets.Insert(userID, form.Title, form.Content, form.Expires)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
@@ -139,6 +140,7 @@ type snippetUpdateForm struct {
 }
 
 func (app *application) snippetUpdatePost(w http.ResponseWriter, r *http.Request) {
+	userID := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
 		http.NotFound(w, r)
@@ -165,7 +167,7 @@ func (app *application) snippetUpdatePost(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = app.snippets.Update(int(id), form.Title, form.Content, form.Expires)
+	err = app.snippets.Update(int(id), userID, form.Title, form.Content, form.Expires)
 	if err != nil {
 		app.serverError(w, r, err)
 		return
@@ -177,13 +179,14 @@ func (app *application) snippetUpdatePost(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) snippetDelete(w http.ResponseWriter, r *http.Request) {
+	userID := app.sessionManager.GetInt(r.Context(), "authenticatedUserID")
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
 		http.NotFound(w, r)
 		return
 	}
 
-	err = app.snippets.Delete(int(id))
+	err = app.snippets.Delete(int(id), userID)
 	if err != nil {
 		app.serverError(w, r, err)
 		return

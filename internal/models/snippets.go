@@ -7,9 +7,9 @@ import (
 )
 
 type SnippetModelInterface interface {
-	Insert(title string, content string, expires int) (int, error)
-	Update(id int, title string, content string, expires int) error
-	Delete(id int) error
+	Insert(userID int, title string, content string, expires int) (int, error)
+	Update(id int, userID int, title string, content string, expires int) error
+	Delete(id int, userID int) error
 	Get(id int) (Snippet, error)
 	Latest() ([]Snippet, error)
 }
@@ -23,6 +23,7 @@ type Snippet struct {
 	Content string
 	Created time.Time
 	Expires time.Time
+	UserId  int
 }
 
 // Define a SnippetModel type which wraps a sql.DB connection pool.
@@ -31,11 +32,11 @@ type SnippetModel struct {
 }
 
 // This will insert a new snippet into the database.
-func (m *SnippetModel) Insert(title string, content string, expires int) (int, error) {
-	stmt := `INSERT INTO snippets (title, content, created, expires)
-    VALUES(?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
+func (m *SnippetModel) Insert(userID int, title string, content string, expires int) (int, error) {
+	stmt := `INSERT INTO snippets (user_id, title, content, created, expires)
+    VALUES(?, ?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
 
-	result, err := m.DB.Exec(stmt, title, content, expires)
+	result, err := m.DB.Exec(stmt, userID, title, content, expires)
 	if err != nil {
 		return 0, err
 	}
@@ -47,18 +48,18 @@ func (m *SnippetModel) Insert(title string, content string, expires int) (int, e
 	return int(id), nil
 }
 
-func (m *SnippetModel) Update(id int, title string, content string, expires int) error {
+func (m *SnippetModel) Update(id int, userID int, title string, content string, expires int) error {
 	stmt := `UPDATE snippets SET title = ?, content = ?, expires = DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY)
-	WHERE id = ?`
+	WHERE id = ? AND user_id = ?`
 
-	_, err := m.DB.Exec(stmt, title, content, expires, id)
+	_, err := m.DB.Exec(stmt, title, content, expires, id, userID)
 	return err
 }
 
-func (m *SnippetModel) Delete(id int) error {
-	stmt := `DELETE FROM snippets WHERE id = ?`
+func (m *SnippetModel) Delete(id int, userID int) error {
+	stmt := `DELETE FROM snippets WHERE id = ? AND user_id = ?`
 
-	_, err := m.DB.Exec(stmt, id)
+	_, err := m.DB.Exec(stmt, id, userID)
 	return err
 }
 
