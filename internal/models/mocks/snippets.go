@@ -16,15 +16,15 @@ var mockSnippet = models.Snippet{
 
 type SnippetModel struct{}
 
-func (m *SnippetModel) Insert(title string, content string, expires int) (int, error) {
+func (m *SnippetModel) Insert(userID int, title string, content string, expires int) (int, error) {
 	return 2, nil
 }
 
-func (m *SnippetModel) Update(id int, title string, content string, expires int) error {
+func (m *SnippetModel) Update(id int, userID int, title string, content string, expires int) error {
 	return nil
 }
 
-func (m *SnippetModel) Delete(id int) error {
+func (m *SnippetModel) Delete(id int, userID int) error {
 	return nil
 }
 
