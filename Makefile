@@ -4,7 +4,7 @@ db-start:
 db-stop:
 	docker compose down
 install-air:
-	go install github.com/cosmtrek/air@latest
+	go install github.com/air-verse/air@latest
 	export PATH=$(go env GOPATH)/bin:$PATH
 	source ~/.zshrc
 	air init
