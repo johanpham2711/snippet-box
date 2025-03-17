@@ -7,7 +7,8 @@ install-air:
 	go install github.com/air-verse/air@latest
 	export PATH=$(go env GOPATH)/bin:$PATH
 	source ~/.zshrc
-	air init
+	export PATH="$HOME/go/bin:$PATH"
+	source ~/.zshrc
 get-assets:
 	@mkdir -p ui/static
 	curl https://www.alexedwards.net/static/sb-v2.tar.gz | tar -xvz -C ./ui/static/
